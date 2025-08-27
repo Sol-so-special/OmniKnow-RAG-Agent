@@ -2,3 +2,15 @@
 2025-08-27 01:17:10,715 - api_endpoints.pdf_api - INFO - upload_pdf - 24- File saved successfully: uploads/sω² @ a Glance v2.0 (1).pdf
 2025-08-27 01:17:12,665 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event CollectionAddEvent: capture() takes 1 positional argument but 3 were given
 2025-08-27 01:17:41,922 - api_endpoints.pdf_api - INFO - upload_pdf - 24- File saved successfully: uploads/sω² @ a Glance v2.0 (1).pdf
+2025-08-27 01:20:04,424 - api_endpoints.web_api - INFO - scrape_webdata - 17- Scraping task queued for URL: https://www.fcbarcelona.com/en/
+2025-08-27 01:20:06,308 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event CollectionAddEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:22:21,214 - api_endpoints.pdf_api - INFO - query_messages - 36- Received query: two-phase separator
+2025-08-27 01:22:21,216 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:22:21,230 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event CollectionQueryEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:22:21,232 - api_endpoints.pdf_api - INFO - query_messages - 48- PDF query 'two-phase separator' returned 5 results
+2025-08-27 01:22:21,236 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:22:21,249 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event CollectionQueryEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:22:21,251 - api_endpoints.web_api - INFO - query_messages - 52- Web query 'two-phase separator' returned 10 results
+2025-08-27 01:22:49,568 - api_endpoints.pdf_api - INFO - query_messages - 36- Received query: best way to think about two-phase separator
+2025-08-27 01:22:49,570 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:22:49,586 - api_endpoints.pdf_api - INFO - query_messages - 48- PDF query 'best way to think about two-phase separator' returned 5 results
