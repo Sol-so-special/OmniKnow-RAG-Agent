@@ -1,1 +1,4 @@
 
+2025-08-27 01:17:10,715 - api_endpoints.pdf_api - INFO - upload_pdf - 24- File saved successfully: uploads/sω² @ a Glance v2.0 (1).pdf
+2025-08-27 01:17:12,665 - chromadb.telemetry.product.posthog - ERROR - _direct_capture - 59- Failed to send telemetry event CollectionAddEvent: capture() takes 1 positional argument but 3 were given
+2025-08-27 01:17:41,922 - api_endpoints.pdf_api - INFO - upload_pdf - 24- File saved successfully: uploads/sω² @ a Glance v2.0 (1).pdf
