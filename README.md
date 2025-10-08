@@ -75,7 +75,7 @@ ___
    export GOOGLE_API_KEY="your_google_api_key"
    export GOOGLE_CSE_ID="your_custom_search_engine_id"
    
-   # optional
+   # Optional
    export SESSION_SECRET="your_secret"  # app has session middleware commented out
    ```
 
