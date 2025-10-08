@@ -52,7 +52,8 @@ ___
 
 - Python 3.8+
 - Google Gemini API key
-- Google Search API credentials (optional, for enhanced search)
+- Google Search API key
+- Google CSE ID
 
 ### Installation
 
@@ -69,10 +70,13 @@ ___
 
 3. **Set up environment variables**
    ```bash
+   # Required
    export GEMINI_API_KEY="your_gemini_api_key_here"
-   # Optional: For enhanced Google search
    export GOOGLE_API_KEY="your_google_api_key"
    export GOOGLE_CSE_ID="your_custom_search_engine_id"
+   
+   # optional
+   export SESSION_SECRET="your_secret"  # app has session middleware commented out
    ```
 
 4. **Start the FastAPI backend**
@@ -185,11 +189,11 @@ ___
 
 ### Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GEMINI_API_KEY` | Google Gemini API key for the LLM | Yes |
-| `GOOGLE_API_KEY` | Google API key for enhanced search | No |
-| `GOOGLE_CSE_ID` | Custom Search Engine ID | No |
+| Variable (Required) | Description |
+|---------------------|-------------|
+| `GEMINI_API_KEY` | Google Gemini API key for the LLM |
+| `GOOGLE_API_KEY` | Google API key for Google search |
+| `GOOGLE_CSE_ID` | Custom Search Engine ID |
 
 ### Customization Options
 
