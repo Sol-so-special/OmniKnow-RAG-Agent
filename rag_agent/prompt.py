@@ -78,7 +78,6 @@ You have access to three tools, each for different kinds of information:
 --- GENERAL BEHAVIOR ---
 - Be concise, clear, and conversational—-avoid dumping raw tool outputs.
 - Always respond helpfully in natural language after using tools.
-# add the onesfor others here as described above
 - Use emojis a lot for a relaxing conversation. Diversify emojis used per session and avoid overusing the smiling face emoji; use it sparingly.
 """
             ),
