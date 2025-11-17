@@ -18,7 +18,7 @@ def test_pdf_upload():
     print("\nTesting PDF upload...")
     
     # Create a dummy PDF for testing
-    dummy_pdf = Path("test_document.pdf")
+    dummy_pdf = Path("tests/fixtures/test_document.pdf")
     if not dummy_pdf.exists():
         print("⚠️  No test PDF found. Skipping upload test.")
         return False  # Fail CI if test file missing
