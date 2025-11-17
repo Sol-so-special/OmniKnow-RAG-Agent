@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=local
+      - VECTOR_STORE_TYPE=chroma
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_SEARCH_API_KEY=${GOOGLE_SEARCH_API_KEY}
+      - GOOGLE_CSE_ID=${GOOGLE_CSE_ID}
+      - LOG_LEVEL=INFO
+      - PYTHONPATH=/app
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+      - ./chroma_db:/app/chroma_db
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - omniknow
+
+  streamlit:
+    build:
+      context: ./local_frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+      - ENVIRONMENT=local
+    volumes:
+      - ./local_frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - omniknow
+
+networks:
+  omniknow:
+    driver: bridge

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omniknow-backend
+  namespace: omniknow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: omniknow-backend
+  template:
+    metadata:
+      labels:
+        app: omniknow-backend
+    spec:
+      containers:
+      - name: backend
+        image: gcr.io/PLACEHOLDER-PROJECT_ID/omniknow-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PYTHONPATH
+          value: "/app"
+        - name: ENVIRONMENT
+          value: "production"
+        - name: VECTOR_STORE_TYPE
+          value: "pinecone"
+        - name: CLOUD_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: CLOUD_PROVIDER
+        - name: GCS_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: GCS_BUCKET_NAME
+        - name: PLACEHOLDER-GCS_PROJECT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: PLACEHOLDER-GCS_PROJECT_ID
+        - name: CORS_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: CORS_ORIGINS
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: omniknow-secrets
+              key: GEMINI_API_KEY
+        - name: PINECONE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: omniknow-secrets
+              key: PINECONE_API_KEY
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5

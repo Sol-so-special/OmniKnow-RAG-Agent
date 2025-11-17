@@ -1,0 +1,27 @@
+# Ingress for backend API with SSL
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: omniknow-ingress
+  namespace: omniknow
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/cors-enable: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+spec:
+  tls:
+  - hosts:
+    - api.omniknow.my-domain.com  # Placeholder
+    secretName: omniknow-tls
+  rules:
+  - host: api.omniknow.my-domain.com  # Placeholder
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: omniknow-backend
+            port:
+              number: 80

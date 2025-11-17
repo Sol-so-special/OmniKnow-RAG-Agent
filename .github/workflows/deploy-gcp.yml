@@ -1,0 +1,53 @@
+name: Deploy to GCP Cloud Run
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-gcp.yml'
+
+env:
+  PROJECT_ID: omniknow-v2
+  SERVICE_NAME: omniknow-backend
+  REGION: us-central1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Google Cloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ env.PROJECT_ID }}
+    
+    - name: Configure Docker for GCR
+      run: |
+        gcloud auth configure-docker
+    
+    - name: Build and push image
+      run: |
+        cd backend
+        docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA .
+        docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA
+        docker tag gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA gcr.io/$PROJECT_ID/$SERVICE_NAME:latest
+        docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:latest
+    
+    - name: Deploy to Cloud Run
+      env:
+        GCS_BUCKET: omniknow-uploads-gcp
+      run: |
+        gcloud run deploy $SERVICE_NAME \
+          --image gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA \
+          --region $REGION \
+          --platform managed \
+          --allow-unauthenticated \
+          --memory 2Gi --cpu 2 --timeout 300 --concurrency 80 \
+          --min-instances 0 --max-instances 10 \
+          --set-env-vars ENVIRONMENT=production,CLOUD_PROVIDER=gcp,VECTOR_STORE_TYPE=pinecone,GCS_BUCKET_NAME=$GCS_BUCKET,GCS_PROJECT_ID=$PROJECT_ID,PINECONE_CLOUD=gcp,PINECONE_REGION=$REGION,CORS_ORIGINS='["*"]' \
+          --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest,GOOGLE_SEARCH_API_KEY=GOOGLE_SEARCH_API_KEY:latest,GOOGLE_CSE_ID=GOOGLE_CSE_ID:latest"

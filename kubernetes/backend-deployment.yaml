@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omniknow-backend
+  namespace: omniknow
+  labels:
+    app: omniknow-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: omniknow-backend
+  template:
+    metadata:
+      labels:
+        app: omniknow-backend
+    spec:
+      containers:
+      - name: backend
+        image: <PLACEHOLDER-MY_REGISTRY>/omniknow-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: PYTHONPATH
+          value: "/app"
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: ENVIRONMENT
+        - name: CLOUD_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: CLOUD_PROVIDER
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: S3_BUCKET_NAME
+        - name: S3_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: S3_REGION
+        - name: PINECONE_CLOUD
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: PINECONE_CLOUD
+        - name: PINECONE_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: PINECONE_REGION
+        - name: CORS_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: CORS_ORIGINS
+        - name: VECTOR_STORE_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: VECTOR_STORE_TYPE
+        - name: EMBEDDING_MODEL
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: EMBEDDING_MODEL
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: omniknow-config
+              key: LOG_LEVEL
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: omniknow-secrets
+              key: GEMINI_API_KEY
+        - name: PINECONE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: omniknow-secrets
+              key: PINECONE_API_KEY
+        - name: GOOGLE_SEARCH_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: omniknow-secrets
+              key: GOOGLE_SEARCH_API_KEY
+        - name: GOOGLE_CSE_ID
+          valueFrom:
+            secretKeyRef:
+              name: omniknow-secrets
+              key: GOOGLE_CSE_ID
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5

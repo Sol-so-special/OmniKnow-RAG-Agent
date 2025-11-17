@@ -1,0 +1,24 @@
+# Simulates cloud environment for testing locally (API-only)
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - VECTOR_STORE_TYPE=pinecone
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - GOOGLE_SEARCH_API_KEY=${GOOGLE_SEARCH_API_KEY}
+      - GOOGLE_CSE_ID=${GOOGLE_CSE_ID}
+      - LOG_LEVEL=INFO
+      - PYTHONPATH=/app
+    networks:
+      - omniknow
+
+networks:
+  omniknow:
+    driver: bridge

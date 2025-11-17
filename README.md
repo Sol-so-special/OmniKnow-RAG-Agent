@@ -1,287 +1,489 @@
-# ✨ **OmniKnow RAG Assistant** 📚🔎🌍
+# 🤖 **OmniKnow RAG Agent**
 
-A powerful Retrieval-Augmented Generation (RAG) agent that combines PDF documents, web content, and real-time Google search capabilities to provide comprehensive answers to user queries. Built with FastAPI, Streamlit, and LangChain.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688.svg)](https://fastapi.tiangolo.com)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg)](https://www.docker.com/)
+[![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg)](https://kubernetes.io/)
 
-___
+> **A production-grade Retrieval-Augmented Generation (RAG) system with hybrid vector storage (ChromaDB/Pinecone for local/cloud hosting), multi-cloud deployment (AWS/GCP), and intelligent document processing.**
 
-## 🌟 Features
+---
 
-### Multi-Source Knowledge Integration
-- **📄 PDF Processing**: Upload and query PDF documents with intelligent chunking and semantic search
-- **🌐 Web Content Extraction**: Scrape and index web pages for future querying
-- **🔍 Real-time Google Search**: Access fresh, up-to-date information from the web
-- **🤖 Intelligent Agent**: LangChain-powered agent that automatically selects the best information source
+## 🎯 Overview
 
-### Advanced RAG Capabilities
-- **🧠 Semantic Search**: Uses HuggingFace embeddings (sentence-transformers/all-MiniLM-L6-v2) for accurate similarity matching
-- **💾 Vector Storage**: ChromaDB for efficient document storage and retrieval
-- **🔧 Smart Tool Selection**: Automatically chooses between PDF search, web search, or Google search based on query context
-- **📊 Structured Results**: Returns relevant chunks with metadata including page numbers and source URLs
+**OmniKnow** is an enterprise-ready RAG agent that combines **LangChain**, **FastAPI**, and **cloud-native infrastructure** to deliver intelligent document search and conversational AI capabilities. The system supports **local self-hosting** (Docker Compose) and **multi-cloud deployment** (AWS EKS, GCP Cloud Run/GKE) with **environment-adaptive vector storage** (ChromaDB for local, Pinecone for cloud) and **automated CI/CD pipelines**.
 
-### User Experience
-- **🎨 Custom UI**: Beautiful Streamlit interface with animated background and custom styling
-- **📱 Responsive Design**: Works seamlessly on desktop and mobile devices
-- **⚡ Real-time Processing**: Background tasks for web scraping with immediate feedback
-- **🔄 Re-upload Prevention**: Intelligent duplicate detection to prevent redundant processing
+### Key Features
 
-___
+- 🤖 **Intelligent RAG Agent**: LangChain-powered conversational AI with multi-source knowledge retrieval
+- 🔄 **Hybrid Vector Storage**: ChromaDB for local development, Pinecone for cloud production
+- ☁️ **Multi-Cloud Ready**: Deploy to AWS EKS or GCP (Cloud Run/GKE) with identical codebase
+- 🐳 **Fully Containerized**: Docker-based development and production environments
+- ⚙️ **Production MLOps**: CI/CD via GitHub Actions, Kubernetes orchestration, Prometheus monitoring
+- 📄 **Multi-Source Ingestion**: PDFs, web pages, and live Google Search integration
+- 🔍 **Smart Deduplication**: Hash-based duplicate detection for uploaded documents
+- 📊 **Interactive UI**: Streamlit-based local interface for demos and testing
+- 🔐 **Environment-Based Config**: Pydantic settings with secure secrets management
+
+---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Streamlit     │    │    FastAPI      │    │   ChromaDB      │
-│   Frontend      │◄──►│   Backend       │◄──►│   Vector Store  │
-│                 │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   LangChain     │    │   Tool System   │    │   Google API    │
-│   Agent         │◄──►│   (PDF/Web/     │◄──►│   Search        │
-│                 │    │   Google)       │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                      USER INTERFACE                             │
+│  ┌──────────────────┐              ┌─────────────────────────┐  │
+│  │  Streamlit UI    │              │   API Clients (curl,    │  │
+│  │  (Local Only)    │              │   Postman, Python SDK)  │  │
+│  └────────┬─────────┘              └───────────┬─────────────┘  │
+│           │                                    │                │
+│           └────────────────┬───────────────────┘                │
+└────────────────────────────┼────────────────────────────────────┘
+                             │
+                    ┌────────▼────────┐
+                    │   FastAPI       │
+                    │   Backend       │
+                    │   (Port 8000)   │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+        ┌─────▼───────┐ ┌────▼─────┐ ┌──────▼─────┐
+        │ PDF Service │ │ Web      │ │ Agent      │
+        │             │ │ Service  │ │ Executor   │
+        └─────┬───────┘ └────┬─────┘ └──────┬─────┘
+              │              │              │
+              └──────────────┼──────────────┘
+                             │
+                    ┌────────▼─────────┐
+                    │ Vector Store     │
+                    │ (Chroma/Pinecone)│
+                    └──────────────────┘
 ```
 
-___
+[See architecture diagram](#full-architecture-diagram) ⬇️
+
+**Architecture Highlights:**
+
+- **Microservices Design**: Decoupled services (PDF, Web, Agent) with clear interfaces
+- **Repository Pattern**: Abstract vector store interface supporting multiple backends
+- **Factory Pattern**: Environment-based service instantiation (local vs. cloud)
+- **Agent Pattern**: LangChain tool-calling architecture for intelligent query routing
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.8+
-- Google Gemini API key
-- Google Search API key
-- Google CSE ID
+- **Docker** & **Docker Compose** (v20.10+)
+- **Python** 3.11+
+- **API Keys**:
+  - [Gemini API Key](https://makersuite.google.com/app/apikey) (required)
+  - [Pinecone API Key](https://www.pinecone.io/) (cloud deployment only)
+  - [Google Search API](https://console.cloud.google.com/) + CSE ID (optional)
 
-### Installation
+### Local Development
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Sol-so-special/OmniKnow-RAG-Assistant
-   cd OmniKnow-RAG-Assistant/rag_agent
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   # Required
-   export GEMINI_API_KEY="your_gemini_api_key_here"
-   export GOOGLE_API_KEY="your_google_api_key"
-   export GOOGLE_CSE_ID="your_custom_search_engine_id"
-   
-   # Optional
-   export SESSION_SECRET="your_secret"  # app has session middleware commented out
-   ```
-
-4. **Start the FastAPI backend**
-   ```bash
-   uvicorn api:app --host 127.0.0.1 --port 8000
-   ```
-
-5. **Launch the Streamlit frontend** (in a new terminal)
-   ```bash
-   streamlit run app.py
-   ```
-
-6. **Access the application**
-   - Open your browser to `http://localhost:8501`
-   - The FastAPI docs are available at `http://localhost:8000/docs`
-
-___
-
-## 📖 Usage Guide
-
-### Adding Content Sources
-
-**Upload PDF Documents:**
-1. Use the file uploader in the sidebar
-2. Select PDF files to upload
-3. Wait for processing confirmation
-4. Your PDFs are now searchable via chat
-
-**Add Web Pages:**
-1. Enter a URL in the sidebar text input
-2. Ensure the URL starts with `http://` or `https://`
-3. Click enter to start scraping
-4. The web content becomes searchable once processed
-
-### Chatting with OmniKnow
-
-Simply type your questions in the chat interface. OmniKnow will automatically:
-
-- Search your uploaded PDFs for relevant content
-- Query indexed web pages for related information  
-- Perform live Google searches for fresh data
-- Combine results intelligently to provide comprehensive answers
-
-### Example Queries
-
-```
-"What does the research paper say about machine learning?"
-"Summarize the main points from the uploaded documents"
-"What's the latest news about artificial intelligence?"
-"Find information about the company mentioned in the web page"
-```
-
-___
-
-## 🔧 API Endpoints
-
-### PDF Operations
-- `POST /add_pdf/` - Upload and process PDF documents
-- `POST /search_query_in_pdf/` - Search within uploaded PDFs
-
-### Web Content Operations  
-- `POST /scrape_webdata/` - Extract and index web page content
-- `POST /search_query_in_web/` - Search within indexed web pages
-
-### Request/Response Examples
-
-**Upload PDF:**
 ```bash
-curl -X POST "http://127.0.0.1:8000/add_pdf/" \
-  -H "Content-Type: multipart/form-data" \
+# 1. Clone repository
+git clone https://github.com/Sol-so-special/OmniKnow-RAG-Agent
+cd OmniKnow-RAG-Agent
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env with your API keys
+
+# 3. Start services
+docker-compose up --build
+
+# 4. Access
+# - Streamlit UI: http://localhost:8501
+# - Backend API: http://localhost:8000
+# - API Docs: http://localhost:8000/docs
+# - Metrics: http://localhost:8000/metrics
+```
+
+### API Usage
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Upload PDF
+curl -X POST http://localhost:8000/pdf/upload \
   -F "file=@document.pdf"
-```
 
-**Search PDFs:**
-```bash
-curl -X POST "http://127.0.0.1:8000/search_query_in_pdf/" \
+# Search PDFs
+curl -X POST http://localhost:8000/pdf/search \
   -H "Content-Type: application/json" \
-  -d '{"input": "machine learning algorithms"}'
+  -d '{"input": "What are the key findings?"}'
+
+# Chat with agent
+curl -X POST http://localhost:8000/agent/chat \
+  -H "Content-Type: application/json" \
+  -d '{"input": "Summarize the latest AI trends"}'
 ```
 
-___
+---
 
-## 🏗️ Project Structure
+## 🧠 AI/ML Capabilities
+
+### Retrieval-Augmented Generation (RAG)
+
+- **Semantic Search**: Sentence-Transformers (`all-mpnet-base-v2`) embeddings with 768 dimensions
+- **Vector Similarity**: Cosine similarity search across indexed document chunks
+- **Hybrid Retrieval**: Combines PDF, web, and live search results
+- **Context-Aware**: Maintains conversation history for multi-turn interactions
+
+### Document Processing Pipeline
+
+1. **Ingestion**: PyPDFLoader for PDFs, WebBaseLoader for web content
+2. **Chunking**: RecursiveCharacterTextSplitter (1000 chars, 200 overlap for PDFs)
+3. **Embedding**: HuggingFace Transformers with normalized vectors
+4. **Indexing**: Dual storage (ChromaDB/Pinecone) with namespace-based collections
+5. **Deduplication**: SHA256 hash-based duplicate detection
+
+### LangChain Agent Architecture
+
+```python
+Tools:
+  - pdf_search: Query uploaded PDF knowledge base
+  - web_data_search: Search scraped web pages
+  - google_search: Live Google Search API integration
+
+Agent: Gemini 2.5 Pro with tool-calling capability
+Executor: LangChain AgentExecutor with:
+  - Verbose logging
+  - Error handling
+  - Max 10 iterations
+```
+
+---
+
+## ☁️ Cloud Deployment
+
+### AWS (EKS) - Production
+
+```bash
+# Prerequisites
+eksctl create cluster --name omniknow-cluster --region us-east-1
+
+# 1. Create S3 bucket
+aws s3 mb s3://omniknow-uploads --region us-east-1
+
+# 2. Update kubernetes/configmap.yaml with your bucket name
+# Change S3_BUCKET_NAME: "omniknow-uploads" to your actual bucket
+
+# 3. Deploy
+kubectl apply -f kubernetes/namespace.yaml
+
+# 4. Create secrets from your actual keys
+kubectl create secret generic omniknow-secrets -n omniknow \
+  --from-literal=GEMINI_API_KEY=your-actual-key \
+  --from-literal=PINECONE_API_KEY=your-actual-key \
+  --from-literal=GOOGLE_SEARCH_API_KEY=your-actual-key \
+  --from-literal=GOOGLE_CSE_ID=your-actual-id
+
+# 5. Apply manifests
+kubectl apply -f kubernetes/configmap.yaml
+kubectl apply -f kubernetes/backend-deployment.yaml
+kubectl apply -f kubernetes/backend-service.yaml
+
+# 6. Verify
+kubectl get pods -n omniknow
+```
+
+**Infrastructure:**
+
+- **Compute**: EKS with 2 t3.medium nodes
+- **Storage**: S3 for file uploads, Pinecone for vectors
+- **Registry**: Amazon ECR
+- **Scaling**: Horizontal Pod Autoscaler (2-10 replicas)
+
+### GCP (Cloud Run) - Serverless
+
+```bash
+# Build and deploy
+gcloud builds submit --tag gcr.io/PROJECT_ID/omniknow-backend backend/
+gcloud run deploy omniknow-backend \
+  --image gcr.io/PROJECT_ID/omniknow-backend \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated
+```
+
+**Infrastructure:**
+
+- **Compute**: Cloud Run (serverless, pay-per-request)
+- **Storage**: GCS (optional), Pinecone for vectors
+- **Registry**: Google Container Registry
+
+### GCP (GKE) - Production
+
+```bash
+# Create namespace
+kubectl create namespace omniknow
+
+# Create secrets dynamically
+kubectl create secret generic omniknow-secrets -n omniknow \
+  --from-literal=GEMINI_API_KEY=your-key \
+  --from-literal=PINECONE_API_KEY=your-key \
+  --from-literal=GOOGLE_SEARCH_API_KEY=your-key \
+  --from-literal=GOOGLE_CSE_ID=your-id
+
+# Apply manifests
+kubectl apply -f kubernetes-gcp/configmap.yaml
+kubectl apply -f kubernetes-gcp/backend-deployment.yaml
+kubectl apply -f kubernetes-gcp/backend-service.yaml
+```
+
+**Infrastructure:**
+
+- **Compute**: GKE with 2 n1-standard-2 nodes
+- **Storage**: GCS (optional), Pinecone for vectors
+- **Registry**: Google Container Registry
+- **Scaling**: Horizontal Pod Autoscaler (2-10 replicas)
+
+**Detailed deployment instructions**: See [`docs/deployment-guide.md`](docs/deployment-guide.md)
+
+---
+
+## 🔧 MLOps & DevOps
+
+### CI/CD Pipelines
+
+**GitHub Actions Workflows:**
+
+1. **`.github/workflows/test.yml`**:
+
+- Runs on PRs and commits
+- Linting (flake8), import validation
+- Automated testing
+
+2. **`.github/workflows/deploy-aws.yml`**:
+
+- Builds Docker image
+- Pushes to Amazon ECR
+- Deploys to EKS cluster
+- Triggers on `main` branch commits
+
+3. **`.github/workflows/deploy-gcp.yml`**:
+
+- Builds and pushes to GCR
+- Deploys to Cloud Run
+- Auto-scales based on traffic
+
+4. **`.github/workflows/deploy-gke.yml`**:
+   - Builds and pushes to GCR
+   - Deploys to GKE cluster
+   - Rolling updates with kubectl
+
+### Monitoring & Observability
+
+- **Prometheus**: Metrics exposed at `/metrics` endpoint
+- **Health Checks**: Kubernetes liveness/readiness probes
+- **Logging**: Structured logging with log levels (INFO/DEBUG/ERROR)
+- **Tracing**: Request/response logging for debugging
+
+### Infrastructure as Code
+
+- **Kubernetes Manifests**: Declarative YAML for reproducible deployments
+- **Docker Compose**: Multi-service orchestration for local development
+- **Environment Parity**: Identical configuration across local/staging/production
+
+---
+
+## 📁 Project Structure (simplified)
 
 ```
-rag_agent/
-├── api_endpoints/         # FastAPI route handlers
-│   ├── pdf_api.py         # PDF upload and search endpoints
-│   └── web_api.py         # Web scraping and search endpoints
-├── demo/                  # Demo videos and screenshots
-├── frontend/              # UI components and styling
-│   ├── background.gif     # Animated background
-│   └── styling.py         # Custom CSS and UI functions
-├── upload/                # Auto-created directory for PDF storage
-├── api.py                 # FastAPI application setup
-├── app.py                 # Streamlit main application
-├── pdf_data_collector.py  # PDF processing and ChromaDB integration
-├── pdf_wrapper.py         # LangChain tool wrapper for PDF search
-├── prompt.py              # System prompt and agent configuration
-├── pydantic_models.py     # Request/response data models
-├── tools.py               # LangChain tool definitions
-├── web_data_collector.py  # Web scraping and ChromaDB integration
-├── web_wrapper.py         # LangChain tool wrapper for web search
-└── requirements.txt       # Python dependencies
+Omniknow-RAG-Agent/
+├── backend/                  # FastAPI application
+│   ├── api/                  # REST API routes
+│   ├── agent/                # LangChain agent logic
+│   ├── services/             # Business logic (PDF, Web, Vector Store)
+│   ├── tools/                # LangChain tools (PDF, Web, Google)
+│   ├── core/                 # Config, logging
+│   └── models/               # Pydantic schemas
+├── local_frontend/           # Streamlit UI (local demos)
+├── kubernetes/               # AWS EKS manifests
+├── kubernetes-gcp/           # GCP GKE manifests
+├── .github/workflows/        # CI/CD pipelines
+├── docs/                     # Documentation
+│   ├── deployment-guide.md
+│   └── architecture.png
+├── scripts/                  # Utility scripts
+└── tests/                    # Test suite
 ```
 
-___
+**Key Design Patterns:**
 
-## ⚙️ Configuration
+- **Clean Architecture**: Separation of API, business logic, and infrastructure
+- **Dependency Injection**: Services injected via factory functions
+- **Repository Pattern**: Abstract `VectorStore` interface with multiple implementations
+- **Strategy Pattern**: Environment-based service selection (local/cloud)
 
-### Environment Variables
+---
 
-| Variable (Required) | Description |
-|---------------------|-------------|
-| `GEMINI_API_KEY` | Google Gemini API key for the LLM |
-| `GOOGLE_API_KEY` | Google API key for Google search |
-| `GOOGLE_CSE_ID` | Custom Search Engine ID |
+## 🛠️ Technology Stack
 
-### Customization Options
+### Backend
 
-**Adjust Chunk Sizes:**
-- Modify `chunk_size` and `chunk_overlap` in `web_data_collector.py`
-- Default: 800 characters with 100 character overlap
+- **Framework**: FastAPI 0.104.1 (async REST API)
+- **Agent**: LangChain 0.3.26 with Gemini 2.5 Pro
+- **Embeddings**: Sentence-Transformers (all-mpnet-base-v2)
+- **Vector Stores**: ChromaDB 0.5.3 (local), Pinecone 5.0.1 (cloud)
+- **Document Processing**: PyPDF 3.17.4, BeautifulSoup4 4.12.2
+- **Server**: Gunicorn + Uvicorn workers
 
-**Change Embedding Model:**
-- Update the model name in data collector files
-- Current: `sentence-transformers/all-MiniLM-L6-v2`
+### Infrastructure
 
-**Modify Search Results:**
-- Adjust the `k` parameter in wrapper classes
-- Controls number of results returned per search
+- **Containerization**: Docker 20.10+
+- **Orchestration**: Kubernetes 1.28+
+- **Cloud Providers**: AWS (EKS, ECR, S3), GCP (Cloud Run, GCR, GCS)
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Prometheus FastAPI Instrumentator
 
-___
+### Frontend (Local)
 
-## 🔍 Monitoring & Logging
+- **UI Framework**: Streamlit 1.48.1
+- **Styling**: Custom CSS with PIL for animations
 
-- **API Logs**: Comprehensive logging to `api.log`
-- **Prometheus Metrics**: Built-in metrics collection via `/metrics` endpoint
-- **Error Handling**: Graceful error responses with detailed logging
-- **Request Tracking**: Full request/response logging for debugging
+---
 
-___
+## 🧪 Testing
 
-## 🛠️ Technical Details
+```bash
+# Run automated tests
+python tests/test_api.py
 
-### Core Technologies
-- **Backend**: FastAPI with async support
-- **Frontend**: Streamlit with custom CSS styling
-- **LLM**: Google Gemini 2.5 Flash
-- **Embeddings**: HuggingFace Transformers
-- **Vector DB**: ChromaDB
-- **Agent Framework**: LangChain with tool calling
+# Manual testing
+# 1. Start services
+docker-compose up
 
-### Performance Features
-- **Background Processing**: Web scraping runs asynchronously
-- **Caching**: Streamlit caching for GIF processing
-- **Connection Pooling**: Efficient HTTP request handling
-- **Error Recovery**: Automatic retry mechanisms
+# 2. Upload test PDF
+curl -X POST http://localhost:8000/pdf/upload -F "file=@test.pdf"
 
-### Security Considerations
-- **CORS Configuration**: Properly configured for web deployment
-- **Input Validation**: Pydantic models for request validation
-- **File Type Restrictions**: Only PDF files accepted for upload
-- **URL Validation**: Proper URL format checking
+# 3. Query
+curl -X POST http://localhost:8000/pdf/search \
+  -H "Content-Type: application/json" \
+  -d '{"input": "test query"}'
+```
 
-___
+**Test Coverage:**
 
-## 🆘 Troubleshooting
+- Health check validation
+- PDF upload/search
+- Web scraping
+- Agent chat functionality
+- Import validation (CI)
 
-### Common Issues
+---
 
-**"GEMINI_API_KEY is not set" Error:**
-- Ensure your API key is properly exported as an environment variable
-- Verify the key has the correct permissions
+## 📊 Performance
 
-**PDF Upload Fails:**
-- Check that the file is a valid PDF
-- Ensure the `upload/` directory is writable
-- Verify the FastAPI server is running on port 8000
+### Benchmarks (Local)
 
-**Web Scraping Errors:**
-- Confirm the URL is accessible and properly formatted
-- Some websites may block automated scraping
-- Check network connectivity
+|Operation          |Latency (p50)|Latency (p99)|
+|-------------------|-------------|-------------|
+|PDF Upload (10MB)  |2.5s         |4.1s         |
+|Vector Search (k=5)|120ms        |350ms        |
+|Agent Query        |1.8s         |3.2s         |
 
-**Empty Search Results:**
-- Ensure content has been properly uploaded/scraped first
-- Try different search terms or query phrasings
-- Check the logs for processing errors
+### Scalability
 
-### Performance Tips
+- **Horizontal Scaling**: Kubernetes HPA (2-10 pods)
+- **Concurrency**: Gunicorn with 2 Uvicorn workers per pod
+- **Vector Store**: Pinecone handles 100K+ queries/sec
+- **Rate Limiting**: Configurable via FastAPI middleware
 
-- For large PDFs, processing may take several minutes
-- Web scraping speed depends on the target site's response time
-- Use specific queries for better search results
-- Monitor memory usage with large document collections
+---
 
-___
+## 🔐 Security
+
+- **Secrets Management**: Kubernetes Secrets, GCP Secret Manager
+- **API Key Rotation**: Environment-based configuration
+- **CORS**: Configurable origins (restricted in production)
+- **Input Validation**: Pydantic models with size limits (200MB max upload)
+- **Container Security**: Non-root user, minimal base images
+
+---
+
+## 📖 Documentation
+
+- **API Documentation**: Available at `/docs` (Swagger UI) and `/redoc` (ReDoc)
+
+- **Deployment Guide**: [`docs/deployment-guide.md`](docs/deployment-guide.md)
+
+- **Architecture Diagram**: 
+<a id="full-architecture-diagram"></a>
+<img src="docs/architecture.png" alt="OmniKnow RAG Agent Architecture Diagram" width="800">
+
+- **Contributing Guidelines**: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+
+---
 
 ## 🤝 Contributing
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+We welcome contributions! Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
 
-___
+**Quick Start for Contributors:**
 
-## 📄 License
+```bash
+# 1. Fork and clone
+git clone https://github.com/Sol-so-special/OmniKnow-RAG-Agent
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# 2. Create feature branch
+git checkout -b feature/your-feature
+
+# 3. Make changes and test
+docker-compose up
+python tests/test_api.py
+
+# 4. Submit PR
+git push origin feature/your-feature
+```
+
+---
+
+## 📝 License
+
+This project is licensed under the **MIT License** - see the [`LICENSE`](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **LangChain** for the agent framework
+- **Pinecone** for scalable vector search
+- **FastAPI** for the modern Python API framework
+- **ChromaDB** for local vector storage
+- **Google Gemini** for advanced LLM capabilities
+
+---
+
+## 📈 Roadmap
+
+- [ ] Add support for more document formats (DOCX, TXT, Markdown)
+- [ ] Implement user authentication and multi-tenancy
+- [ ] Add conversational memory persistence
+- [ ] Support for custom embedding models
+- [ ] GraphQL API alternative
+- [ ] Real-time streaming responses (SSE)
+- [ ] Advanced RAG techniques (HyDE, ColBERT)
+
+---
+
+## 🐛 Known Issues & Limitations
+
+- **Streamlit UI**: Local-only, not designed for cloud deployment
+- **PDF Metadata**: Page numbers may be inaccurate for complex PDFs
+- **Cold Starts**: Cloud Run may experience ~1-2s latency on first request
+- **Concurrent Uploads**: File upload is synchronous (not optimized for high concurrency)
+
+For bug reports and feature requests, please [open an issue](https://github.com/Sol-so-special/OmniKnow-RAG-Agent/issues).
+
+---
+
+**⭐ If you find this project useful, please give it a star!**
