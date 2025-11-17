@@ -530,7 +530,7 @@ If you have questions about contributing:
 1. Check existing documentation
 2. Search closed issues
 3. Ask in GitHub Discussions
-4. Email: solsosospecial@gmail.com@gmail.com
+4. Email: solsosospecial@gmail.com
 
 ---
 
