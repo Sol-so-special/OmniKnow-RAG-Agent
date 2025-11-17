@@ -1,4 +1,4 @@
-# ✨ **OmniKnow RAG Agent** 📚🔎🌍
+# ✨ **OmniKnow RAG Assistant** 📚🔎🌍
 
 A powerful Retrieval-Augmented Generation (RAG) agent that combines PDF documents, web content, and real-time Google search capabilities to provide comprehensive answers to user queries. Built with FastAPI, Streamlit, and LangChain.
 
@@ -59,8 +59,8 @@ ___
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Sol-so-special/OmniKnow-RAG-Agent
-   cd rag_agent
+   git clone https://github.com/Sol-so-special/OmniKnow-RAG-Assistant
+   cd OmniKnow-RAG-Assistant/rag_agent
    ```
 
 2. **Install dependencies**
