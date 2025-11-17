@@ -1,6 +1,6 @@
-# Contributing to **OmniKnow RAG Agent**
+# Contributing to **OmniKnow RAG Assistant**
 
-Contributions to the OmniKnow RAG Agent are welcome! This document provides guidelines for contributing to the project.
+Contributions to the OmniKnow RAG Assistant are welcome! This document provides guidelines for contributing to the project.
 
 ___
 
@@ -11,8 +11,8 @@ ___
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/Sol-so-special/OmniKnow-RAG-Agent
-   cd rag_agent
+   git clone https://github.com/Sol-so-special/OmniKnow-RAG-Assistant
+   cd OmniKnow-RAG-Assistant/rag_agent
    ```
 
 3. **Create a virtual environment**:
@@ -249,4 +249,4 @@ ___
 - **Discussions**: Use GitHub discussions for questions and ideas
 - **Documentation**: Check existing docs before asking questions
 
-Thank you for contributing to **OmniKnow RAG Agent**! 🚀
+Thank you for contributing to **OmniKnow RAG Assistant**! 🚀
