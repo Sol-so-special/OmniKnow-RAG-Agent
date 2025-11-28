@@ -276,9 +276,10 @@ kubectl apply -f kubernetes-gcp/backend-service.yaml
 - Auto-scales based on traffic
 
 4. **`.github/workflows/deploy-gke.yml`**:
-   - Builds and pushes to GCR
-   - Deploys to GKE cluster
-   - Rolling updates with kubectl
+
+- Builds and pushes to GCR
+- Deploys to GKE cluster
+- Rolling updates with kubectl
 
 ### Monitoring & Observability
 

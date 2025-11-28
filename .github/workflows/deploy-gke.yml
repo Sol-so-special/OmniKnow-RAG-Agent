@@ -69,6 +69,7 @@ jobs:
         kubectl apply -f kubernetes-gcp/configmap.yaml
         kubectl apply -f kubernetes-gcp/backend-deployment.yaml
         kubectl apply -f kubernetes-gcp/backend-service.yaml
+        kubectl apply -f kubernetes-gcp/hpa.yaml
     
     - name: Verify deployment
       run: |

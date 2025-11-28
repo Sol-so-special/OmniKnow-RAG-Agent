@@ -383,21 +383,27 @@ Response:
 
 ## Scaling
 
-### AWS EKS
+### AWS EKS & GCP GKE (Kubernetes)
 
+The project uses a **Horizontal Pod Autoscaler (HPA)** that is applied automatically via CI/CD pipelines. The HPA monitors CPU utilization and scales pods between 2-10 replicas based on demand.
+
+**View autoscaler status:**
 ```bash
-# Scale deployment
-kubectl scale deployment omniknow-backend --replicas=5 -n omniknow
-
-# Auto-scaling
-kubectl autoscale deployment omniknow-backend \
-  --cpu-percent=70 \
-  --min=2 \
-  --max=10 \
-  -n omniknow
+kubectl get hpa -n omniknow
+kubectl describe hpa omniknow-backend-hpa -n omniknow
 ```
 
+**How it works:**
+
+- **Target CPU:** 70% utilization
+- **Min pods:** 2
+- **Max pods:** 10
+- **Scale-up:** Immediate when CPU exceeds 70%
+- **Scale-down:** Waits 5 minutes before reducing pods (prevents flapping)
+
 ### GCP Cloud Run
+
+Cloud Run uses **serverless autoscaling** configured via deployment flags:
 
 ```bash
 gcloud run services update omniknow-backend \
@@ -407,21 +413,8 @@ gcloud run services update omniknow-backend \
   --concurrency 80
 ```
 
-### GCP GKE
-
-```bash
-# Scale deployment manually
-kubectl scale deployment omniknow-backend --replicas=5 -n omniknow
-
-# Auto-scaling
-kubectl autoscale deployment omniknow-backend \
-  --cpu-percent=70 \
-  --min=2 \
-  --max=10 \
-  -n omniknow
-
-# Verify autoscaler
-kubectl get hpa -n omniknow
+- Scales to zero when idle (cost-efficient)
+- Scales up automatically based on request concurrency
 
 ---
 

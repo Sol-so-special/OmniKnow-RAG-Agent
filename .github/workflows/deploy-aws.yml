@@ -63,4 +63,5 @@ jobs:
         kubectl set image deployment/omniknow-backend \
           backend=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
           -n omniknow
+        kubectl apply -f kubernetes/hpa.yaml
         kubectl rollout status deployment/omniknow-backend -n omniknow
