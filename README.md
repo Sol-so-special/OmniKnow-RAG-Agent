@@ -307,7 +307,7 @@ Omniknow-RAG-Agent/
 │   ├── tools/                # LangChain tools (PDF, Web, Google)
 │   ├── core/                 # Config, logging
 │   └── models/               # Pydantic schemas
-├── local_frontend/           # Streamlit UI (local demos)
+├── local_frontend/           # Streamlit UI (local ONLY)
 ├── kubernetes/               # AWS EKS manifests
 ├── kubernetes-gcp/           # GCP GKE manifests
 ├── .github/workflows/        # CI/CD pipelines

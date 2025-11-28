@@ -379,14 +379,16 @@ Omniknow-RAG-Agent/
 ├── kubernetes/                   # AWS EKS manifests
 │   ├── namespace.yaml
 │   ├── configmap.yaml
-│   ├── secrets.yaml.example      # Template (DO NOT commit real secrets)
+│   ├── secrets.yaml.example      # Template
+│   ├── hpa.yaml
 │   ├── backend-deployment.yaml
 │   ├── backend-service.yaml
-│   └── ingress.yaml              # Optional: NGINX ingress with TLS
+│   └── ingress.yaml              # NGINX ingress with TLS
 │
-├── kubernetes-gcp/               # GCP GKE manifests (alternative to Cloud Run)
+├── kubernetes-gcp/               # GCP GKE manifests
 │   ├── configmap.yaml
 │   ├── secrets.yaml.example
+│   ├── hpa.yaml
 │   ├── backend-deployment.yaml
 │   └── backend-service.yaml
 │
